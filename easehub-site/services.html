@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Easehub | Services</title>
+<style>
+  :root { --brand:#0f766e; --brand-dark:#115e59; --bg:#f7f7f5; --card:#fff; --nav:rgba(255,255,255,.96); --text:#1f2937; --muted:#6b7280; --border:#d1d5db; --shadow:rgba(0,0,0,.08); --tint:#ecfdf5; }
+  [data-theme="dark"] { --bg:#0f172a; --card:#1e293b; --nav:rgba(17,24,39,.95); --text:#e5e7eb; --muted:#94a3b8; --border:#334155; --shadow:rgba(0,0,0,.4); --tint:#0c2a27; }
+  [hidden] { display:none !important; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; transition:background .3s, color .3s; }
+  a { color:inherit; text-decoration:none; }
+  button { font:inherit; cursor:pointer; }
+  nav { position:sticky; top:0; background:var(--nav); backdrop-filter:blur(8px); z-index:10; box-shadow:0 2px 12px var(--shadow); padding-top:env(safe-area-inset-top,0px); }
+  nav .bar { display:flex; align-items:center; gap:20px; padding:12px 24px; flex-wrap:wrap; }
+  .logo { font-weight:800; font-size:1.3rem; color:var(--brand); margin-right:auto; }
+  .links { display:flex; gap:20px; list-style:none; margin:0; padding:0; }
+  .links a { padding:4px 0; border-bottom:2px solid transparent; transition:border-color .3s, color .3s; }
+  .links a:hover, .links a.active { color:var(--brand); border-color:var(--brand); }
+  .icon-btn { background:none; border:none; font-size:1.2rem; color:var(--text); padding:6px 8px; border-radius:8px; }
+  .icon-btn:hover { background:var(--border); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 20px; }
+  header.hero { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; padding:72px 0; background-size:200% 200%; animation:shift 12s ease infinite; }
+  header.hero h1 { font-size:clamp(2rem,5vw,3rem); margin:0 0 12px; animation:fadeUp .8s ease both; }
+  header.hero p { margin:0; max-width:620px; opacity:.92; font-size:clamp(1rem,2vw,1.1rem); animation:fadeUp .8s .15s ease both; }
+  main { padding:64px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr)); gap:22px; }
+  .card { position:relative; overflow:hidden; isolation:isolate; background:var(--card); border-radius:16px; padding:26px; box-shadow:0 1px 3px var(--shadow); display:flex; flex-direction:column; transition:transform .35s ease, box-shadow .35s ease, color .3s; }
+  .card::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,var(--brand),#14b8a6); opacity:0; transition:opacity .4s; z-index:-1; }
+  .card:hover { transform:translateY(-8px) scale(1.03); box-shadow:0 18px 36px rgba(15,118,110,.28); color:#fff; }
+  .card:hover::before { opacity:1; }
+  .card:hover p, .card:hover h3, .card:hover .features li, .card:hover .features li::before, .card:hover .price { color:#fff; }
+  .grid:hover .card:not(:hover) { opacity:.6; transform:scale(.97); }
+  .icon { font-size:2.2rem; margin-bottom:12px; transition:transform .4s; }
+  .card:hover .icon { transform:scale(1.2) rotate(-8deg); }
+  .card h3 { margin:0 0 8px; font-size:1.15rem; }
+  .card p { margin:0 0 14px; color:var(--muted); font-size:.95rem; }
+  .features { list-style:none; margin:auto 0 16px; padding:0; font-size:.9rem; }
+  .features li { padding:4px 0 4px 22px; position:relative; }
+  .features li::before { content:"✓"; position:absolute; left:0; color:var(--brand); font-weight:700; }
+  .enquire { align-self:flex-start; background:var(--brand); color:#fff; border:none; padding:9px 18px; border-radius:8px; font-weight:600; transition:background .2s; }
+  .enquire:hover { background:var(--brand-dark); }
+  .card:hover .enquire { background:#fff; color:var(--brand); }
+  footer { text-align:center; padding:28px 20px; color:var(--muted); font-size:.9rem; border-top:1px solid var(--border); }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,120px); background:var(--text); color:var(--bg); padding:12px 20px; border-radius:999px; z-index:50; transition:transform .35s ease; }
+  .toast.show { transform:translate(-50%,0); }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+  @keyframes shift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+  @media (max-width:720px) { .links { gap:12px; font-size:.9rem; } nav .bar { padding:10px 16px; } }
+  @media (hover:none) { .card:hover { transform:none; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="bar">
+    <a href="index.html" class="logo">Easehub</a>
+    <ul class="links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#" class="active">Services</a></li>
+      <li><a href="products.html">Products</a></li>
+    </ul>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Our services</h1>
+    <p>Everything you need for home living, from finding a place to stay to keeping it clean and running smoothly.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="grid">
+      <div class="card"><div class="icon">🏢</div><h3>Flats &amp; apartments</h3><p>Find and book flats and apartments that suit your needs and budget.</p>
+        <ul class="features"><li>Verified listings</li><li>Furnished and unfurnished options</li><li>Flexible lease terms</li></ul>
+        <button class="enquire" data-enquire="Flats &amp; apartments">Enquire</button></div>
+      <div class="card"><div class="icon">🍽️</div><h3>Mess</h3><p>Healthy, home-style meals delivered daily to your door.</p>
+        <ul class="features"><li>Veg and non-veg plans</li><li>Breakfast, lunch and dinner</li><li>Weekly or monthly subscriptions</li></ul>
+        <button class="enquire" data-enquire="Mess">Enquire</button></div>
+      <div class="card"><div class="icon">🧺</div><h3>Laundry</h3><p>Pickup, wash, fold, and return, so your clothes are always fresh.</p>
+        <ul class="features"><li>Same-day pickup</li><li>Dry cleaning and ironing</li><li>Delicate fabric care</li></ul>
+        <button class="enquire" data-enquire="Laundry">Enquire</button></div>
+      <div class="card"><div class="icon">🧹</div><h3>Room cleaning</h3><p>Thorough cleaning of your room, scheduled when it suits you.</p>
+        <ul class="features"><li>Deep cleaning</li><li>Eco-friendly products</li><li>Trained professionals</li></ul>
+        <button class="enquire" data-enquire="Room cleaning">Enquire</button></div>
+      <div class="card"><div class="icon">📦</div><h3>Packers &amp; movers</h3><p>Safe, insured moving for your home, office, or belongings.</p>
+        <ul class="features"><li>Packing with care</li><li>Transit insurance</li><li>Door-to-door transport</li></ul>
+        <button class="enquire" data-enquire="Packers &amp; movers">Enquire</button></div>
+      <div class="card"><div class="icon">🔧</div><h3>Repairs &amp; maintenance</h3><p>Plumbing, electrical, and appliance fixes from verified experts.</p>
+        <ul class="features"><li>Quick response</li><li>Upfront pricing</li><li>Service warranty</li></ul>
+        <button class="enquire" data-enquire="Repairs &amp; maintenance">Enquire</button></div>
+      <div class="card"><div class="icon">🪳</div><h3>Pest control</h3><p>Effective treatment for cockroaches, termites, bed bugs and more.</p>
+        <ul class="features"><li>Safe for children and pets</li><li>Follow-up visit included</li><li>Long-lasting results</li></ul>
+        <button class="enquire" data-enquire="Pest control">Enquire</button></div>
+      <div class="card"><div class="icon">🛒</div><h3>Grocery delivery</h3><p>Fresh groceries and daily essentials delivered to your doorstep.</p>
+        <ul class="features"><li>Fresh produce daily</li><li>Scheduled deliveries</li><li>Easy reorder</li></ul>
+        <button class="enquire" data-enquire="Grocery delivery">Enquire</button></div>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 Easehub. All rights reserved.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let t;
+  function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); clearTimeout(t); t = setTimeout(() => $('toast').classList.remove('show'), 2400); }
+  function applyTheme(dark) {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    $('themeBtn').textContent = dark ? '☀️' : '🌙';
+    try { localStorage.setItem('easehub-theme', dark ? 'dark' : 'light'); } catch (_) {}
+  }
+  let saved = null;
+  try { saved = localStorage.getItem('easehub-theme'); } catch (_) {}
+  applyTheme(saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+  $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.dataset.theme !== 'dark'));
+  document.querySelectorAll('[data-enquire]').forEach(b => b.addEventListener('click', () => toast(`Thanks! We'll contact you about ${b.dataset.enquire}.`)));
+</script>
+</body>
+</html>

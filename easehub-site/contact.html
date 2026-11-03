@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Easehub | Contact</title>
+<style>
+  :root { --brand:#0f766e; --brand-dark:#115e59; --bg:#f7f7f5; --card:#fff; --nav:rgba(255,255,255,.96); --text:#1f2937; --muted:#6b7280; --border:#d1d5db; --input:#fff; --shadow:rgba(0,0,0,.08); }
+  [data-theme="dark"] { --bg:#0f172a; --card:#1e293b; --nav:rgba(17,24,39,.95); --text:#e5e7eb; --muted:#94a3b8; --border:#334155; --input:#0f172a; --shadow:rgba(0,0,0,.4); }
+  [hidden] { display:none !important; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; transition:background .3s, color .3s; overflow-x:hidden; }
+  a { color:inherit; text-decoration:none; }
+  button { font:inherit; cursor:pointer; }
+  nav { position:sticky; top:0; background:var(--nav); backdrop-filter:blur(8px); z-index:10; box-shadow:0 2px 12px var(--shadow); padding-top:env(safe-area-inset-top,0px); }
+  nav .bar { display:flex; align-items:center; gap:20px; padding:12px 24px; flex-wrap:wrap; }
+  .logo { font-weight:800; font-size:1.3rem; color:var(--brand); margin-right:auto; }
+  .links { display:flex; gap:20px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .links a { padding:4px 0; border-bottom:2px solid transparent; transition:border-color .3s, color .3s; }
+  .links a:hover, .links a.active { color:var(--brand); border-color:var(--brand); }
+  .icon-btn { background:none; border:none; font-size:1.2rem; color:var(--text); padding:6px 8px; border-radius:8px; }
+  .icon-btn:hover { background:var(--border); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 20px; }
+  header.hero { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; padding:72px 0 96px; background-size:200% 200%; animation:shift 12s ease infinite; text-align:center; }
+  header.hero h1 { font-size:clamp(2rem,5vw,3rem); margin:0 0 12px; animation:fadeUp .8s ease both; }
+  header.hero p { margin:0 auto; max-width:620px; opacity:.92; font-size:clamp(1rem,2vw,1.1rem); animation:fadeUp .8s .15s ease both; }
+  .badge { display:inline-block; margin-top:18px; background:rgba(255,255,255,.2); padding:6px 14px; border-radius:999px; font-size:.9rem; animation:fadeUp .8s .3s ease both; }
+  .channels { margin-top:-56px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr)); gap:18px; position:relative; z-index:2; }
+  .channel { position:relative; overflow:hidden; isolation:isolate; background:var(--card); border-radius:16px; padding:24px; box-shadow:0 10px 26px var(--shadow); display:flex; flex-direction:column; gap:6px; transition:transform .35s ease, box-shadow .35s ease, color .3s; }
+  .channel::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,var(--brand),#14b8a6); opacity:0; transition:opacity .4s; z-index:-1; }
+  .channel:hover { transform:translateY(-8px) scale(1.03); box-shadow:0 18px 36px rgba(15,118,110,.28); color:#fff; }
+  .channel:hover::before { opacity:1; }
+  .channel:hover p, .channel:hover small { color:#e6fffb; }
+  .channel .icon { font-size:2rem; transition:transform .4s; }
+  .channel:hover .icon { transform:scale(1.2) rotate(-8deg); }
+  .channel h3 { margin:0; font-size:1.1rem; }
+  .channel p { margin:0; color:var(--muted); font-size:.95rem; }
+  .channel small { color:var(--muted); font-size:.82rem; }
+  .btn-sm { margin-top:auto; align-self:flex-start; background:var(--brand); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; font-size:.9rem; }
+  .channel:hover .btn-sm { background:#fff; color:var(--brand); }
+  section.main { padding:72px 0; }
+  .split { display:grid; grid-template-columns:1.1fr 1fr; gap:36px; align-items:start; }
+  h2 { font-size:clamp(1.6rem,4vw,2.1rem); margin:0 0 10px; }
+  .muted { color:var(--muted); }
+  form.msg { display:grid; gap:14px; background:var(--card); border-radius:18px; padding:28px; box-shadow:0 1px 3px var(--shadow); }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  input, select, textarea { font:inherit; padding:12px 14px; border:1px solid var(--border); border-radius:10px; width:100%; background:var(--input); color:var(--text); }
+  input:focus, select:focus, textarea:focus { outline:2px solid var(--brand); border-color:transparent; }
+  textarea { min-height:120px; resize:vertical; }
+  .check { display:flex; gap:8px; align-items:center; font-size:.92rem; color:var(--muted); }
+  .submit { background:var(--brand); color:#fff; border:none; padding:14px; border-radius:10px; font-weight:700; transition:background .2s, transform .2s; }
+  .submit:hover { background:var(--brand-dark); transform:translateY(-2px); }
+  .info { background:var(--card); border-radius:18px; padding:26px; box-shadow:0 1px 3px var(--shadow); margin-bottom:18px; }
+  .info h3 { margin:0 0 10px; }
+  .info ul { list-style:none; padding:0; margin:0; }
+  .info li { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:.95rem; }
+  .info li:last-child { border-bottom:none; }
+  .info li span:first-child { color:var(--muted); }
+  .open { color:#15803d; font-weight:600; }
+  .social { display:flex; gap:10px; flex-wrap:wrap; }
+  .social a { background:var(--bg); padding:10px 16px; border-radius:999px; font-weight:600; font-size:.92rem; transition:background .3s, color .3s, transform .3s; }
+  .social a:hover { background:var(--brand); color:#fff; transform:translateY(-3px); }
+  .map { height:200px; border-radius:18px; background:linear-gradient(135deg,#ccfbf1,#99f6e4); display:grid; place-items:center; color:var(--brand-dark); font-weight:600; margin-top:18px; }
+  [data-theme="dark"] .map { background:linear-gradient(135deg,#134e4a,#115e59); color:#ccfbf1; }
+  .faq { margin-top:18px; }
+  details { background:var(--card); border-radius:12px; padding:14px 18px; margin-bottom:10px; box-shadow:0 1px 3px var(--shadow); }
+  summary { cursor:pointer; font-weight:600; list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:"+"; float:right; color:var(--brand); font-size:1.2rem; }
+  details[open] summary::after { content:"−"; }
+  details p { color:var(--muted); margin:8px 0 0; font-size:.95rem; }
+  footer { text-align:center; padding:28px 20px; color:var(--muted); font-size:.9rem; border-top:1px solid var(--border); }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,120px); background:var(--text); color:var(--bg); padding:12px 20px; border-radius:999px; z-index:50; transition:transform .35s ease; max-width:90vw; text-align:center; }
+  .toast.show { transform:translate(-50%,0); }
+  .reveal { opacity:0; transform:translateY(32px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity:1; transform:none; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+  @keyframes shift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+  @media (max-width:860px) { .split { grid-template-columns:1fr; } }
+  @media (max-width:720px) { .links { gap:12px; font-size:.9rem; } nav .bar { padding:10px 16px; } .row { grid-template-columns:1fr; } form.msg { padding:20px; } }
+  @media (hover:none) { .channel:hover { transform:none; } }
+  @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } .reveal { opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="bar">
+    <a href="index.html" class="logo">Easehub</a>
+    <ul class="links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="#" class="active">Contact</a></li>
+    </ul>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>We're here to help</h1>
+    <p>Questions about a room, a mess plan, or an order? Reach us the way that suits you best.</p>
+    <span class="badge">🟢 Usually replies within 1 hour, 9 AM to 9 PM</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="channels">
+    <div class="channel reveal"><div class="icon">📞</div><h3>Call us</h3><p>Talk to a student support advisor.</p><small>+91 00000 00000 · 9 AM to 9 PM</small><a class="btn-sm" href="tel:+910000000000">Call now</a></div>
+    <div class="channel reveal"><div class="icon">💬</div><h3>WhatsApp</h3><p>Chat with us and share photos of your query.</p><small>Quick replies, most days</small><a class="btn-sm" href="https://wa.me/910000000000" target="_blank" rel="noopener">Open WhatsApp</a></div>
+    <div class="channel reveal"><div class="icon">✉️</div><h3>Email</h3><p>Send detailed questions or documents.</p><small>Replies within one working day</small><a class="btn-sm" href="mailto:hello@easehub.example">Send email</a></div>
+    <div class="channel reveal"><div class="icon">🤖</div><h3>Live chat</h3><p>Get instant help from our website assistant.</p><small>Available 24/7</small><button class="btn-sm" id="chatBtn">Start chat</button></div>
+  </div>
+</div>
+
+<section class="main">
+  <div class="wrap split">
+    <div class="reveal">
+      <h2>Send us a message</h2>
+      <p class="muted">Tell us what you need and we will route it to the right team.</p>
+      <form class="msg" id="msgForm">
+        <div class="row">
+          <input name="name" placeholder="Full name" required>
+          <input name="email" type="email" placeholder="Email" required>
+        </div>
+        <div class="row">
+          <input name="phone" type="tel" placeholder="Phone (optional)">
+          <input name="college" placeholder="College or area">
+        </div>
+        <select name="topic" required>
+          <option value="">What is this about?</option>
+          <option>Finding a room or PG</option>
+          <option>Mess or tiffin plan</option>
+          <option>Laundry or cleaning</option>
+          <option>Student essentials order</option>
+          <option>Order or payment help</option>
+          <option>Partner with Easehub</option>
+          <option>Something else</option>
+        </select>
+        <textarea name="message" placeholder="Describe your question" required></textarea>
+        <label class="check"><input type="checkbox" name="callback" style="width:auto"> Call me back if it's urgent</label>
+        <button class="submit" type="submit">Send message</button>
+      </form>
+    </div>
+
+    <aside class="reveal">
+      <div class="info">
+        <h3>Office hours</h3>
+        <ul>
+          <li><span>Monday to Friday</span><span>9 AM to 9 PM</span></li>
+          <li><span>Saturday</span><span>10 AM to 7 PM</span></li>
+          <li><span>Sunday</span><span class="open">Chat and WhatsApp only</span></li>
+        </ul>
+      </div>
+      <div class="info">
+        <h3>Visit or write to us</h3>
+        <ul>
+          <li><span>Office</span><span>Your address here</span></li>
+          <li><span>Support email</span><span>hello@easehub.example</span></li>
+          <li><span>Partner email</span><span>partners@easehub.example</span></li>
+        </ul>
+        <div class="map">📍 Map coming soon</div>
+      </div>
+      <div class="info">
+        <h3>Follow us</h3>
+        <div class="social">
+          <a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">X</a><a href="#">YouTube</a>
+        </div>
+      </div>
+      <div class="faq">
+        <details><summary>How fast will I get a reply?</summary><p>Chat and WhatsApp are usually within an hour during office hours. Email replies come within one working day.</p></details>
+        <details><summary>Can I call about a room I am already viewing?</summary><p>Yes. Mention the listing name when you call so the advisor can pull up the details.</p></details>
+        <details><summary>Do you help with mess or room complaints?</summary><p>Yes. Share the issue and the partner name, and we will follow up with the provider on your behalf.</p></details>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<footer>© 2026 Easehub. All rights reserved.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let t;
+  function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); clearTimeout(t); t = setTimeout(() => $('toast').classList.remove('show'), 2600); }
+  function applyTheme(dark) {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    $('themeBtn').textContent = dark ? '☀️' : '🌙';
+    try { localStorage.setItem('easehub-theme', dark ? 'dark' : 'light'); } catch (_) {}
+  }
+  let saved = null;
+  try { saved = localStorage.getItem('easehub-theme'); } catch (_) {}
+  applyTheme(saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+  $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.dataset.theme !== 'dark'));
+  $('chatBtn').addEventListener('click', () => toast('Live chat is opening… (demo)'));
+  $('msgForm').addEventListener('submit', e => { e.preventDefault(); e.target.reset(); toast('Thanks! Your message has been sent.'); });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

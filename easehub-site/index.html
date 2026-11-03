@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Easehub for Students</title>
+<style>
+  :root { --brand:#4338ca; --brand-dark:#312e81; --accent:#fef3c7; --bg:#f7f7f5; --section:#fff; --card:#fff; --nav:rgba(255,255,255,.96); --text:#1f2937; --muted:#6b7280; --border:#d1d5db; --input:#fff; --shadow:rgba(0,0,0,.08); }
+  [data-theme="dark"] { --bg:#0f172a; --section:#111827; --card:#1e293b; --nav:rgba(17,24,39,.95); --text:#e5e7eb; --muted:#94a3b8; --border:#334155; --input:#0f172a; --shadow:rgba(0,0,0,.4); --accent:#422006; }
+  [hidden] { display:none !important; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; scroll-padding-top:80px; -webkit-text-size-adjust:100%; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; line-height:1.5; transition:background .3s, color .3s; }
+  a { color:inherit; text-decoration:none; }
+  button { font:inherit; cursor:pointer; }
+
+  /* ---------- Navigation ---------- */
+  nav { position:fixed; top:0; left:0; right:0; background:var(--nav); backdrop-filter:blur(8px); z-index:20; transition:box-shadow .3s; padding-top:env(safe-area-inset-top,0px); }
+  nav.scrolled { box-shadow:0 2px 12px var(--shadow); }
+  nav .bar { width:100%; padding:12px 24px 12px max(20px, calc((100% - 1100px) / 2 + 20px)); display:flex; align-items:center; gap:16px; }
+  .logo { font-weight:800; font-size:1.3rem; color:var(--brand); letter-spacing:-.5px; }
+  .desk-links { display:flex; gap:20px; list-style:none; margin:0; padding:0; }
+  .desk-links a { position:relative; padding:4px 0; }
+  .desk-links a::after { content:""; position:absolute; left:0; bottom:-2px; width:0; height:2px; background:var(--brand); transition:width .3s; }
+  .desk-links a:hover::after, .desk-links a.active::after { width:100%; }
+  .desk-links a.active { color:var(--brand); font-weight:600; }
+  .right { margin-left:auto; display:flex; align-items:center; gap:12px; }
+  .search { position:relative; width:260px; }
+  .search input { padding-left:38px; }
+  .search::before { content:"🔍"; position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:.9rem; pointer-events:none; }
+  .actions { display:flex; align-items:center; gap:8px; }
+  .icon-btn { background:none; border:none; font-size:1.2rem; color:var(--text); padding:6px 8px; border-radius:8px; }
+  .icon-btn:hover { background:var(--border); }
+  .login-btn { background:var(--brand); color:#fff; border:none; padding:9px 16px; border-radius:8px; font-weight:600; white-space:nowrap; }
+  .login-btn:hover { background:var(--brand-dark); }
+
+  /* ---------- Drawer, overlay, modal ---------- */
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .3s; z-index:30; }
+  .overlay.open { opacity:1; pointer-events:auto; }
+  .drawer { position:fixed; top:0; right:0; bottom:0; width:min(300px,85vw); background:var(--card); z-index:31; transform:translateX(100%); transition:transform .35s ease; box-shadow:-8px 0 24px var(--shadow); display:flex; flex-direction:column; }
+  .drawer.open { transform:none; }
+  .drawer-head { display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--border); font-size:1.1rem; }
+  .drawer-list { list-style:none; margin:0; padding:8px 0; overflow-y:auto; }
+  .drawer-list a, .drawer-list button { display:block; width:100%; text-align:left; padding:14px 20px; background:none; border:none; color:var(--text); font-size:1rem; }
+  .drawer-list a:hover, .drawer-list button:hover { background:var(--bg); }
+  .drawer-list hr { border:none; border-top:1px solid var(--border); margin:8px 0; }
+  .modal-wrap { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; padding:20px; z-index:40; animation:fade .25s ease; }
+  .modal { background:var(--card); color:var(--text); width:100%; max-width:380px; border-radius:16px; padding:28px; position:relative; animation:pop .3s ease; }
+  .modal .close { position:absolute; top:10px; right:10px; }
+  .tabs { display:flex; gap:6px; background:var(--bg); padding:4px; border-radius:10px; margin-bottom:18px; }
+  .tab { flex:1; background:none; border:none; padding:9px; border-radius:8px; color:var(--muted); font-weight:600; }
+  .tab.active { background:var(--card); color:var(--brand); box-shadow:0 1px 3px var(--shadow); }
+  .modal h3 { margin:0 0 16px; font-size:1.3rem; }
+  .modal .small { font-size:.8rem; color:var(--muted); margin:14px 0 0; text-align:center; }
+  input, textarea { font:inherit; padding:13px 14px; border:1px solid var(--border); border-radius:10px; width:100%; background:var(--input); color:var(--text); }
+  input:focus, textarea:focus { outline:2px solid var(--brand); border-color:transparent; }
+  textarea { min-height:120px; resize:vertical; }
+  .submit { background:var(--brand); color:#fff; border:none; padding:14px; border-radius:10px; font-weight:700; transition:background .2s, transform .2s; }
+  .submit:hover { background:var(--brand-dark); transform:translateY(-2px); }
+  form.contact { display:grid; gap:14px; max-width:560px; }
+
+  /* ---------- Sections ---------- */
+  section { padding:96px 20px; transition:background-color .8s ease; }
+  .wrap { max-width:1100px; margin:0 auto; }
+  h2 { font-size:clamp(1.6rem,4vw,2.2rem); margin:0 0 12px; transition:transform .4s ease, color .3s; }
+  h2.in:hover { transform:translateX(8px) scale(1.02); color:var(--brand); }
+  .lead { color:var(--muted); max-width:640px; margin:0 0 40px; font-size:clamp(.95rem,2vw,1.05rem); }
+  .no-results { text-align:center; color:var(--muted); padding:30px 0; }
+  .products { background:transparent; }
+  #services.tinted { background-color:rgba(243,240,255,.85); }
+  #products.tinted { background-color:rgba(254,249,236,.85); }
+  #contact.tinted { background-color:rgba(238,242,255,.85); }
+  [data-theme="dark"] #services.tinted { background-color:rgba(30,27,75,.85); }
+  [data-theme="dark"] #products.tinted { background-color:rgba(42,31,10,.85); }
+  [data-theme="dark"] #contact.tinted { background-color:rgba(30,27,58,.85); }
+  footer { text-align:center; padding:28px 20px; color:var(--muted); font-size:.9rem; background:transparent; }
+
+  /* ---------- Hero ---------- */
+  .home { background:linear-gradient(135deg,rgba(67,56,202,.8),rgba(49,46,129,.8)); background-size:200% 200%; animation:gradientShift 12s ease infinite; color:#fff; min-height:100vh; min-height:100svh; display:flex; align-items:center; padding-top:120px; position:relative; overflow:hidden; }
+  .home::before, .home::after { content:""; position:absolute; border-radius:50%; background:rgba(255,255,255,.08); animation:drift 12s ease-in-out infinite alternate; }
+  .home::before { width:420px; height:420px; top:-120px; right:-100px; }
+  .home::after { width:260px; height:260px; bottom:-80px; left:-60px; animation-delay:-4s; }
+  .home .wrap { position:relative; z-index:1; display:grid; grid-template-columns:1.2fr 1fr; gap:40px; align-items:center; }
+  .home h1 { font-size:clamp(2rem,6vw,3.4rem); line-height:1.15; margin:0 0 16px; animation:fadeUp .9s ease both; }
+  .home p { font-size:clamp(1rem,2.2vw,1.15rem); opacity:.92; max-width:560px; animation:fadeUp .9s .15s ease both; }
+  .rotator { display:inline-block; height:1.15em; overflow:hidden; vertical-align:bottom; }
+  .rot-list { display:block; animation:rot 9s ease-in-out infinite; }
+  .rot-list span { display:block; line-height:1.15; color:#fde68a; }
+  @keyframes rot { 0%,28% { transform:translateY(0); } 33%,61% { transform:translateY(-1.15em); } 66%,94% { transform:translateY(-2.3em); } 100% { transform:translateY(0); } }
+  .orbit { --r:min(125px,32vw); position:relative; width:min(320px,78vw); aspect-ratio:1; margin:0 auto; }
+  .orbit .core { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:clamp(4rem,10vw,6rem); animation:float 4s ease-in-out infinite; }
+  .orbit span { position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px; border-radius:50%; display:grid; place-items:center; font-size:1.6rem; background:rgba(255,255,255,.18); box-shadow:0 6px 18px rgba(0,0,0,.15); animation:orbit 16s linear infinite; animation-delay:calc(var(--i) * -2.67s); }
+  @keyframes orbit { from { transform:rotate(0deg) translateX(var(--r)) rotate(0deg); } to { transform:rotate(360deg) translateX(var(--r)) rotate(-360deg); } }
+  @keyframes float { 0%,100% { transform:translate(-50%,0); } 50% { transform:translate(-50%,-18px); } }
+  @keyframes drift { from { transform:translate(0,0); } to { transform:translate(30px,40px); } }
+  @keyframes gradientShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+  @keyframes fade { from { opacity:0; } to { opacity:1; } }
+  @keyframes pop { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:none; } }
+  .btn { display:inline-block; margin-top:28px; background:#fff; color:var(--brand); padding:14px 28px; border-radius:999px; font-weight:700; transition:transform .2s, box-shadow .2s; animation:fadeUp .9s .3s ease both; }
+  .btn:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.2); }
+
+  /* ---------- Cards ---------- */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr)); gap:20px; }
+  .card { position:relative; overflow:hidden; isolation:isolate; background:var(--card); border-radius:16px; padding:26px; box-shadow:0 1px 3px var(--shadow); display:flex; flex-direction:column; transition:transform .3s, box-shadow .3s; }
+  .card::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,var(--brand),#818cf8); opacity:0; transition:opacity .4s ease; z-index:-1; }
+  .card:hover { transform:translateY(-6px); box-shadow:0 14px 30px rgba(67,56,202,.18); }
+  .card:hover::before { opacity:1; }
+  .card:hover h3, .card:hover p, .card:hover .spec, .card:hover .price, .card:hover .price small, .card:hover .features li { color:#fff; }
+  .card:hover .features li::before { color:#fff; }
+  .grid:hover .card:not(:hover) { opacity:.6; transform:scale(.97); }
+  .icon { font-size:2.2rem; margin-bottom:12px; transition:transform .4s; }
+  .card:hover .icon { transform:scale(1.2) rotate(-8deg); }
+  .card h3 { margin:0 0 8px; font-size:1.15rem; }
+  .card p { margin:0 0 14px; color:var(--muted); font-size:.95rem; }
+  .features { list-style:none; margin:auto 0 0; padding:0; font-size:.9rem; }
+  .features li { padding:4px 0 4px 22px; position:relative; }
+  .features li::before { content:"✓"; position:absolute; left:0; color:var(--brand); font-weight:700; }
+  .tag { align-self:flex-start; background:var(--accent); color:#b45309; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:10px; }
+  .emoji { font-size:3.2rem; text-align:center; background:var(--bg); border-radius:12px; padding:26px 0; margin-bottom:16px; transition:transform .4s; }
+  .product:hover .emoji { transform:scale(1.08) rotate(-8deg); }
+  .spec { font-size:.85rem; color:var(--muted); margin:0 0 6px; }
+  .price-row { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:14px; gap:10px; flex-wrap:wrap; }
+  .price { font-weight:800; font-size:1.2rem; color:var(--brand); }
+  .price small { font-weight:500; color:var(--muted); font-size:.8rem; }
+  .enquire { background:var(--brand); color:#fff; padding:8px 16px; border-radius:8px; font-size:.9rem; font-weight:600; border:none; transition:background .2s; }
+  .enquire:hover { background:var(--brand-dark); }
+
+  /* ---------- Scroll reveal ---------- */
+  .reveal { opacity:0; transform:translateY(40px) scale(.98); transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.from-left { transform:translateX(-70px); }
+  .reveal.from-right { transform:translateX(70px); }
+  .reveal.zoom { transform:scale(.85); }
+  .reveal.in { opacity:1; transform:none; }
+  .reveal.d1 { transition-delay:.08s; } .reveal.d2 { transition-delay:.16s; } .reveal.d3 { transition-delay:.24s; }
+  .reveal.d4 { transition-delay:.32s; } .reveal.d5 { transition-delay:.4s; } .reveal.d6 { transition-delay:.48s; }
+  .card.in:hover { transform:translateY(-10px) scale(1.04); color:#fff; box-shadow:0 20px 40px rgba(67,56,202,.3); transition:transform .4s ease, box-shadow .4s ease, color .3s ease; transition-delay:0s; }
+  .card.in:hover .icon { transform:scale(1.2) rotate(-8deg); }
+  .grid:hover .card.in:not(:hover) { opacity:.6; transform:scale(.97); }
+  #progress { position:fixed; top:0; left:0; height:4px; width:0; background:linear-gradient(90deg,var(--brand),#818cf8,var(--accent)); z-index:25; }
+
+  /* ---------- More sections ---------- */
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:20px; }
+  .step { background:var(--card); border-radius:16px; padding:28px; box-shadow:0 1px 3px var(--shadow); transition:transform .3s, box-shadow .3s; }
+  .step:hover { transform:translateY(-6px); box-shadow:0 14px 30px rgba(67,56,202,.18); }
+  .num { display:block; font-size:2.4rem; font-weight:800; color:var(--brand); opacity:.35; margin-bottom:6px; transition:opacity .3s; }
+  .step:hover .num { opacity:1; }
+  .step h3 { margin:0 0 8px; }
+  .step p { margin:0; color:var(--muted); }
+  .chips { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr)); gap:16px; }
+  .area { display:flex; gap:14px; align-items:center; background:var(--card); border-radius:14px; padding:18px 20px; box-shadow:0 1px 3px var(--shadow); transition:transform .3s, background .3s, color .3s; }
+  .area span { font-size:2rem; }
+  .area h3 { margin:0; font-size:1.05rem; }
+  .area p { margin:2px 0 0; color:var(--muted); font-size:.9rem; }
+  .area:hover { transform:translateX(8px); background:var(--brand); color:#fff; }
+  .area:hover p { color:#e0e7ff; }
+  .stats-sec { padding-top:0; padding-bottom:0; margin-top:-40px; position:relative; z-index:2; }
+  .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr)); gap:20px; text-align:center; background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; border-radius:20px; padding:40px 24px; box-shadow:0 20px 40px rgba(67,56,202,.25); }
+  .stat b { display:block; font-size:clamp(2rem,5vw,3rem); }
+  .stat span { opacity:.85; font-size:.95rem; }
+  .quote blockquote { margin:0 0 14px; font-style:italic; }
+  .quote figcaption { color:var(--muted); font-size:.9rem; }
+  .card.quote:hover blockquote, .card.quote:hover figcaption { color:#fff; }
+  .narrow { max-width:760px; margin:0 auto; }
+  details { background:var(--card); border-radius:12px; padding:16px 20px; margin-bottom:12px; box-shadow:0 1px 3px var(--shadow); transition:box-shadow .3s; }
+  details[open] { box-shadow:0 8px 20px rgba(67,56,202,.15); }
+  summary { cursor:pointer; font-weight:600; list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:"+"; float:right; color:var(--brand); font-size:1.3rem; line-height:1; transition:transform .3s; }
+  details[open] summary::after { transform:rotate(45deg); }
+  details p { color:var(--muted); margin:10px 0 0; }
+  .cta { padding:0 20px 96px; }
+  .cta-box { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; border-radius:20px; padding:48px 32px; text-align:center; max-width:1100px; margin:0 auto; }
+  .cta-box p { opacity:.9; }
+  .cta-form { display:flex; gap:10px; max-width:460px; margin:20px auto 0; flex-wrap:wrap; }
+  .cta-form input { flex:1; min-width:200px; }
+  .cta-form .submit { background:#fff; color:var(--brand); }
+  .cta-form .submit:hover { background:#eef2ff; }
+
+  /* ---------- Hyperspace starfield ---------- */
+  .warp { position:fixed; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+
+  /* ---------- Blue hero with apartment scene ---------- */
+  :root { --lime:#e2f55c; }
+  .home { background:linear-gradient(135deg,rgba(11,31,77,.9),rgba(30,64,175,.86) 60%,rgba(14,116,144,.82)); background-size:200% 200%; }
+  .home .hero-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; border:1px solid rgba(255,255,255,.28); padding:7px 14px; border-radius:999px; }
+  .eyebrow i { width:8px; height:8px; border-radius:50%; background:var(--lime); }
+  .home h1 { font-family:Impact,"Arial Narrow","Helvetica Neue",Arial,sans-serif; font-weight:900; text-transform:uppercase; font-size:clamp(3.4rem,9.5vw,7.4rem); line-height:.88; letter-spacing:-.01em; margin:20px 0 18px; }
+  .home h1 .accent { color:var(--lime); display:block; }
+  .home .hero-copy p { font-size:clamp(1rem,2vw,1.15rem); opacity:.9; max-width:500px; margin:0; animation:fadeUp .9s .15s ease both; }
+  .hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; animation:fadeUp .9s .3s ease both; }
+  .home .btn { margin-top:0; background:var(--lime); color:#0b1f4d; border-radius:12px; animation:none; }
+  .home .btn:hover { background:#f0ff8a; }
+  .btn-ghost-hero { display:inline-block; border:2px solid rgba(255,255,255,.8); color:#fff; padding:12px 22px; border-radius:12px; font-weight:700; transition:background .2s, color .2s; }
+  .btn-ghost-hero:hover { background:#fff; color:#0b1f4d; }
+
+  .scene { position:relative; width:100%; max-width:500px; aspect-ratio:1/1; margin-left:auto; border-radius:32px; overflow:visible; }
+  .room { position:absolute; inset:0; border-radius:32px; overflow:hidden; background:linear-gradient(180deg,#1e3a8a,#172554); box-shadow:0 30px 60px rgba(0,0,0,.35); }
+  .room::after { content:""; position:absolute; left:0; right:0; bottom:0; height:26%; background:#0f1d4a; }
+  .window { position:absolute; top:14%; left:9%; width:42%; height:38%; border-radius:16px; border:8px solid #0b1f4d; background:linear-gradient(180deg,#93c5fd,#dbeafe); box-shadow:0 0 50px rgba(147,197,253,.45); background-image:linear-gradient(90deg,transparent 47%,#0b1f4d 47% 53%,transparent 53%),linear-gradient(transparent 47%,#0b1f4d 47% 53%,transparent 53%); }
+  .lamp { position:absolute; top:12%; right:14%; font-size:2.8rem; filter:drop-shadow(0 0 18px #fde68a); z-index:2; }
+  .bed { position:absolute; bottom:20%; left:10%; width:62%; height:17%; border-radius:14px 14px 8px 8px; background:#e0e7ff; box-shadow:inset 0 -9px 0 #a5b4fc; z-index:2; }
+  .bed::before { content:""; position:absolute; left:-6%; top:-70%; width:10%; height:170%; border-radius:10px; background:#60a5fa; }
+  .pillow { position:absolute; top:-32%; left:12%; width:26%; height:62%; border-radius:12px; background:#fff; }
+  .sofa { position:absolute; right:9%; bottom:22%; font-size:3.6rem; z-index:2; }
+  .float { position:absolute; width:62px; height:62px; border-radius:20px; display:grid; place-items:center; font-size:2rem; background:rgba(255,255,255,.16); backdrop-filter:blur(4px); box-shadow:0 10px 24px rgba(0,0,0,.25); animation:bob 4s ease-in-out infinite; z-index:3; }
+  .f1 { top:8%; left:-6%; }
+  .f2 { bottom:8%; left:40%; animation-delay:-1.3s; }
+  .f3 { top:42%; right:-6%; animation-delay:-2.6s; }
+  @keyframes bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+  .sticker { position:absolute; top:-6%; right:-6%; width:150px; height:150px; border-radius:50%; background:var(--lime); color:#0b1f4d; display:grid; place-content:center; text-align:center; font-weight:800; text-transform:uppercase; font-size:.72rem; letter-spacing:.04em; transform:rotate(12deg); z-index:4; box-shadow:0 14px 30px rgba(0,0,0,.3); }
+  .sticker b { font-size:2.6rem; line-height:1; font-weight:900; }
+  @media (max-width:860px) {
+    .home .hero-grid { grid-template-columns:1fr; text-align:center; }
+    .home .hero-copy p { margin-left:auto; margin-right:auto; }
+    .hero-actions { justify-content:center; }
+    .eyebrow { justify-content:center; }
+    .scene { max-width:380px; margin:0 auto; }
+  }
+  @media (max-width:720px) {
+    .home h1 { font-size:clamp(2.8rem,14vw,4.2rem); }
+    .sticker { width:120px; height:120px; font-size:.62rem; }
+    .sticker b { font-size:2rem; }
+    .btn-ghost-hero { width:100%; text-align:center; }
+    .home .btn { width:100%; text-align:center; }
+  }
+
+  /* ---------- Toast ---------- */
+  .toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,120px); background:var(--text); color:var(--bg); padding:12px 20px; border-radius:999px; font-size:.92rem; z-index:50; transition:transform .35s ease; max-width:90vw; text-align:center; }
+  .toast.show { transform:translate(-50%,0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:860px) {
+    .home .wrap { grid-template-columns:1fr; text-align:center; }
+    .home p { margin-left:auto; margin-right:auto; }
+    .orbit { order:-1; }
+  }
+  @media (max-width:720px) {
+    .desk-links { display:none; }
+    nav .bar { flex-wrap:wrap; padding:10px 16px; gap:10px; }
+    .logo { margin-right:auto; }
+    .right { order:3; flex-basis:100%; margin-left:0; flex-wrap:wrap; justify-content:flex-end; }
+    .search { flex-basis:100%; width:auto; }
+    .actions { margin-left:auto; }
+    section { padding:72px 16px; }
+    .home { padding-top:120px; min-height:auto; padding-bottom:72px; }
+    .btn { width:100%; text-align:center; }
+    .lead { margin-bottom:28px; }
+  }
+  @media (max-width:360px) {
+    .logo { font-size:1.1rem; }
+    .login-btn { padding:8px 10px; font-size:.9rem; }
+    .card { padding:20px; }
+  }
+  @media (hover:none) { .card:hover, .btn:hover { transform:none; } }
+  @media (prefers-reduced-motion:reduce) {
+    .home, .home::before, .home::after, .orbit span, .orbit .core, .rot-list { animation:none !important; }
+    html { scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="warp" class="warp" aria-hidden="true"></canvas>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <div class="bar">
+    <a href="#home" class="logo">Easehub</a>
+    <ul class="desk-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="products.html">Essentials</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="right">
+      <div class="search">
+        <input id="search" type="search" placeholder="Search rooms, mess, or essentials" aria-label="Search">
+      </div>
+      <div class="actions">
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+        <button class="login-btn" id="authBtn">Login</button>
+        <a href="portal/index.html" class="icon-btn" title="Profile and rewards dashboard" aria-label="Profile and rewards dashboard" style="text-decoration:none;display:inline-grid;place-items:center">👤</a>
+        <button class="icon-btn" id="menuBtn" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Menu">
+  <div class="drawer-head"><strong>Menu</strong><button class="icon-btn" id="closeMenu" aria-label="Close menu">✕</button></div>
+  <ul class="drawer-list">
+    <li><a href="#home">🏠 Home</a></li>
+    <li><a href="services.html">🏘️ Rooms &amp; Services</a></li>
+    <li><a href="products.html">🎒 Student Essentials</a></li>
+    <li><a href="#faq">❓ FAQ</a></li>
+    <li><a href="contact.html">✉️ Contact</a></li>
+    <hr>
+    <li><button data-soon="Saved Rooms">📌 Saved Rooms</button></li>
+    <li><button data-soon="My Mess Plan">🍱 My Mess Plan</button></li>
+    <li><button data-soon="My Orders">📦 My Orders</button></li>
+    <li><button data-soon="Help Center">💬 Help Center</button></li>
+    <hr>
+    <li><a href="portal/index.html">📊 My Dashboard &amp; Rewards</a></li>
+    <li><button id="drawerTheme">🌙 Dark mode</button></li>
+    <li><button id="drawerAuth">🔐 Login</button></li>
+  </ul>
+</aside>
+
+<div class="modal-wrap" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="icon-btn close" id="closeAuth" aria-label="Close">✕</button>
+    <div class="tabs">
+      <button class="tab active" id="tabLogin" type="button">Login</button>
+      <button class="tab" id="tabSignup" type="button">Sign up</button>
+    </div>
+    <h3 id="authTitle">Welcome back</h3>
+    <form id="authForm">
+      <input id="nameField" name="name" placeholder="Full name" hidden>
+      <input name="email" type="email" placeholder="College or personal email" required>
+      <input name="password" type="password" placeholder="Password" minlength="6" required>
+      <button class="submit" type="submit" id="authSubmit">Login</button>
+    </form>
+    <p class="small">Demo only: any valid details will sign you in.</p>
+  </div>
+</div>
+
+<section id="home" class="home">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><i></i> Now renting near your campus</span>
+      <h1>Student <span class="accent">living.</span></h1>
+      <p>Rooms, PGs and flats close to your college, with mess meals, laundry and essentials delivered to you.</p>
+      <div class="hero-actions">
+        <a href="#services" class="btn">Find a room &rarr;</a>
+        <a href="#products" class="btn-ghost-hero">Shop essentials</a>
+      </div>
+    </div>
+    <div class="scene" id="heroArt" aria-hidden="true">
+      <div class="sticker"><span>up to</span><b>40%</b><span>off first month</span></div>
+      <div class="room">
+        <div class="window"></div>
+        <div class="lamp">💡</div>
+        <div class="bed"><span class="pillow"></span></div>
+        <div class="sofa">🛋️</div>
+      </div>
+      <div class="float f1">🏢</div>
+      <div class="float f2">🍱</div>
+      <div class="float f3">🧺</div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <h2 class="reveal">Rooms &amp; services near campus</h2>
+    <p class="lead reveal">Everything a student needs close to college, from a bed for the night to a meal on the table.</p>
+    <p class="no-results" id="noResults" hidden>No matches found. Try a different word.</p>
+    <div class="grid">
+      <div class="card reveal from-left d1" data-search><div class="icon">🏠</div><h3>Rooms &amp; PGs</h3><p>Verified single and shared rooms within walking distance of your college.</p>
+        <ul class="features"><li>Verified listings</li><li>Single and shared options</li><li>Deposit-friendly plans</li></ul></div>
+      <div class="card reveal zoom d2" data-search><div class="icon">🍱</div><h3>Mess &amp; tiffin</h3><p>Home-style veg and non-veg meals from mess services near your campus.</p>
+        <ul class="features"><li>Daily, weekly or monthly plans</li><li>Veg and non-veg menus</li><li>Pause meals anytime</li></ul></div>
+      <div class="card reveal from-right d3" data-search><div class="icon">🧺</div><h3>Laundry pickup</h3><p>Pickup from your hostel or PG, washed and returned fresh.</p>
+        <ul class="features"><li>Same or next-day pickup</li><li>Ironing and folding</li><li>Student discounts</li></ul></div>
+      <div class="card reveal from-left d4" data-search><div class="icon">🧹</div><h3>Room cleaning</h3><p>Weekly or monthly cleaning so you can focus on your studies.</p>
+        <ul class="features"><li>Student-friendly prices</li><li>Trained staff</li><li>Flexible timing</li></ul></div>
+      <div class="card reveal zoom d5" data-search><div class="icon">📚</div><h3>Study spaces</h3><p>Book quiet desks and reading rooms near your library.</p>
+        <ul class="features"><li>Hourly or daily booking</li><li>Silent zones</li><li>Late-night options</li></ul></div>
+      <div class="card reveal from-right d6" data-search><div class="icon">🚲</div><h3>Bike &amp; cycle rental</h3><p>Get around campus quickly with a bike that's ready to ride.</p>
+        <ul class="features"><li>Daily, weekly or monthly</li><li>Helmet included</li><li>Maintenance covered</li></ul></div>
+      <div class="card reveal from-left d7" data-search><div class="icon">📦</div><h3>Shifting &amp; movers</h3><p>Move between hostels, PGs, or home during semester breaks.</p>
+        <ul class="features"><li>Packing with care</li><li>Transit insurance</li><li>Door-to-door</li></ul></div>
+      <div class="card reveal from-right d8" data-search><div class="icon">🖨️</div><h3>Printing &amp; xerox</h3><p>Project reports, notes, and assignments printed and bound on time.</p>
+        <ul class="features"><li>Same-day printing</li><li>Spiral binding</li><li>Pickup or delivery</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="products" class="products">
+  <div class="wrap">
+    <h2 class="reveal">Student essentials</h2>
+    <p class="lead reveal">Affordable hostel and PG must-haves, delivered to your room.</p>
+    <div class="grid">
+      <div class="card product reveal from-left d1" data-search><div class="emoji">🛏️</div><span class="tag">Bestseller</span><h3>Bed Sheets</h3>
+        <p>Soft, breathable cotton that stays smooth through hostel laundry days.</p>
+        <p class="spec">Material: 100% cotton · Single, double, king</p>
+        <div class="price-row"><div class="price">₹799 <small>/ set</small></div><button class="enquire" data-name="Bed Sheets">Enquire</button></div></div>
+      <div class="card product reveal zoom d2" data-search><div class="emoji">🪶</div><span class="tag">New</span><h3>Pillows</h3>
+        <p>Supportive pillows for long study nights and deep sleep.</p>
+        <p class="spec">Fill: memory foam or microfiber · Set of 2</p>
+        <div class="price-row"><div class="price">₹599 <small>/ set of 2</small></div><button class="enquire" data-name="Pillows">Enquire</button></div></div>
+      <div class="card product reveal from-right d3" data-search><div class="emoji">💡</div><h3>Study Lamp</h3>
+        <p>Adjustable brightness and eye-friendly light for late-night reading.</p>
+        <p class="spec">LED · 3 brightness levels · USB charging</p>
+        <div class="price-row"><div class="price">₹1,199 <small>/ piece</small></div><button class="enquire" data-name="Study Lamp">Enquire</button></div></div>
+      <div class="card product reveal from-left d4" data-search><div class="emoji">🎒</div><h3>Backpack</h3>
+        <p>Roomy, padded bag that fits books, a laptop, and daily essentials.</p>
+        <p class="spec">Laptop sleeve · Water-resistant · 25 L</p>
+        <div class="price-row"><div class="price">₹1,299 <small>/ piece</small></div><button class="enquire" data-name="Backpack">Enquire</button></div></div>
+      <div class="card product reveal zoom d5" data-search><div class="emoji">🍶</div><h3>Steel Water Bottle</h3>
+        <p>Keeps water cool through lectures, labs, and library sessions.</p>
+        <p class="spec">Stainless steel · 1 L · Leak-proof lid</p>
+        <div class="price-row"><div class="price">₹549 <small>/ piece</small></div><button class="enquire" data-name="Steel Water Bottle">Enquire</button></div></div>
+      <div class="card product reveal from-right d6" data-search><div class="emoji">💻</div><h3>Laptop Bag</h3>
+        <p>Slim, protective sleeve for your laptop on campus commutes.</p>
+        <p class="spec">Fits 13–15 in · Padded · Zip pocket</p>
+        <div class="price-row"><div class="price">₹899 <small>/ piece</small></div><button class="enquire" data-name="Laptop Bag">Enquire</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="reveal">How it works</h2>
+    <p class="lead reveal">Three simple steps from searching to settling in.</p>
+    <div class="steps">
+      <div class="step reveal from-left d1"><span class="num">01</span><h3>Tell us your college</h3><p>Share your campus or area so we show what is nearby.</p></div>
+      <div class="step reveal zoom d2"><span class="num">02</span><h3>Compare options</h3><p>See rooms, mess plans, and services with prices and reviews side by side.</p></div>
+      <div class="step reveal from-right d3"><span class="num">03</span><h3>Book and settle in</h3><p>Reserve in a few taps and get reminders for meals, rent, and laundry.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="areas" class="products">
+  <div class="wrap">
+    <h2 class="reveal">Popular areas near campus</h2>
+    <p class="lead reveal">Explore the neighborhoods where students like you already live.</p>
+    <div class="chips">
+      <div class="area reveal from-left d1"><span>🏫</span><div><h3>Main campus</h3><p>120+ rooms · 30+ mess plans</p></div></div>
+      <div class="area reveal zoom d2"><span>📖</span><div><h3>Library road</h3><p>80+ rooms · study spaces nearby</p></div></div>
+      <div class="area reveal from-right d3"><span>🏘️</span><div><h3>Hostel lane</h3><p>65+ rooms · daily tiffin options</p></div></div>
+      <div class="area reveal from-left d4"><span>💻</span><div><h3>Tech park side</h3><p>45+ rooms · late-night laundry</p></div></div>
+      <div class="area reveal zoom d5"><span>🏥</span><div><h3>Medical college area</h3><p>55+ rooms · bike rentals</p></div></div>
+      <div class="area reveal from-right d6"><span>🌳</span><div><h3>Lakeside colony</h3><p>40+ rooms · quiet study rooms</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-sec">
+  <div class="wrap stat-row">
+    <div class="stat reveal from-left d1"><b data-count="5000">0</b><span>students helped</span></div>
+    <div class="stat reveal zoom d2"><b data-count="300">0</b><span>verified rooms</span></div>
+    <div class="stat reveal zoom d3"><b data-count="50">0</b><span>mess partners</span></div>
+    <div class="stat reveal from-right d4"><b>24/7</b><span>student support</span></div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="wrap">
+    <h2 class="reveal">What students say</h2>
+    <p class="lead reveal">Sample feedback showing the kind of experience students can expect.</p>
+    <div class="grid">
+      <figure class="card quote reveal from-left d1"><blockquote>Found a mess five minutes from my hostel within a day. The food actually tastes like home.</blockquote><figcaption>Riya · 2nd year B.Tech</figcaption></figure>
+      <figure class="card quote reveal zoom d2"><blockquote>Booked a shared room near the business school in one evening. The deposit terms were clear from the start.</blockquote><figcaption>Aman · MBA student</figcaption></figure>
+      <figure class="card quote reveal from-right d3"><blockquote>The quiet study desks near the library saved my thesis months. I can book them late at night too.</blockquote><figcaption>Priya · PhD scholar</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap narrow">
+    <h2 class="reveal">Frequently asked questions</h2>
+    <p class="lead reveal">Quick answers before you get started.</p>
+    <details class="reveal"><summary>Are the rooms verified?</summary><p>Yes. We check ownership, photos, and basic amenities before a room is listed.</p></details>
+    <details class="reveal"><summary>Can I pause my mess plan during holidays?</summary><p>Yes. You can pause or skip meals from the plan page, and billing adjusts automatically.</p></details>
+    <details class="reveal"><summary>Do you offer monthly deposit options?</summary><p>Many of our partner rooms allow deposits in installments. Check the listing for the exact terms.</p></details>
+    <details class="reveal"><summary>Is there a student discount?</summary><p>Students get discounts on laundry, cleaning, and essentials. Verify your college email to unlock them.</p></details>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="cta-box reveal">
+    <h2>Get student deals every week</h2>
+    <p>Early access to discounts on rooms, meals, and essentials.</p>
+    <form class="cta-form" onsubmit="event.preventDefault(); this.reset(); showToast('You are on the list!');">
+      <input type="email" placeholder="Your college email" required>
+      <button class="submit" type="submit">Notify me</button>
+    </form>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2 class="reveal">Contact us</h2>
+    <p class="lead reveal">Looking for a room or mess near your college? Tell us where you study and we'll reply within a day. <a href="contact.html" style="color:var(--brand);font-weight:600">See all contact options →</a></p>
+    <form class="contact reveal" onsubmit="event.preventDefault(); this.reset(); showToast('Thanks! We will get back to you soon.');">
+      <input type="text" placeholder="Your name" required>
+      <input type="email" placeholder="Your email" required>
+      <input type="text" placeholder="Your college or area">
+      <textarea placeholder="What are you looking for?" required></textarea>
+      <button class="submit" type="submit">Send message</button>
+    </form>
+  </div>
+</section>
+
+<footer>© 2026 Easehub. Made for students. All rights reserved.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let toastTimer;
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Progress bar, nav shadow, hero parallax
+  const progressBar = $('progress'), heroArt = $('heroArt');
+  addEventListener('scroll', () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progressBar.style.width = (max > 0 ? scrollY / max * 100 : 0) + '%';
+    heroArt.style.translate = `0 ${scrollY * 0.3}px`;
+    $('nav').classList.toggle('scrolled', scrollY > 10);
+  }, { passive: true });
+
+  // Section colour shift and nav highlight
+  const navLinks = [...document.querySelectorAll('.desk-links a')];
+  const spy = new IntersectionObserver(entries => entries.forEach(e => {
+    const on = e.isIntersecting;
+    e.target.classList.toggle('tinted', on);
+    navLinks.forEach(a => a.classList.toggle('active', on && a.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-35% 0px -35% 0px' });
+  ['services', 'products', 'contact'].forEach(id => spy.observe($(id)));
+
+  // Working search across rooms and essentials
+  const searchable = [...document.querySelectorAll('[data-search]')];
+  $('search').addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    let matches = 0;
+    searchable.forEach(card => {
+      const hit = !q || card.textContent.toLowerCase().includes(q);
+      card.hidden = !hit;
+      if (hit) matches++;
+    });
+    $('noResults').hidden = matches > 0 || !q;
+  });
+  $('search').addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const first = searchable.find(c => !c.hidden);
+    if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); $('search').blur(); }
+    else if ($('search').value.trim()) showToast('No matches. Try "mess", "room" or "lamp".');
+  });
+
+  // Dark mode
+  function applyTheme(dark) {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    $('themeBtn').textContent = dark ? '☀️' : '🌙';
+    $('drawerTheme').textContent = dark ? '☀️ Light mode' : '🌙 Dark mode';
+    try { localStorage.setItem('easehub-theme', dark ? 'dark' : 'light'); } catch (_) {}
+  }
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem('easehub-theme'); } catch (_) {}
+  applyTheme(savedTheme ? savedTheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+  const toggleTheme = () => applyTheme(document.documentElement.dataset.theme !== 'dark');
+  $('themeBtn').addEventListener('click', toggleTheme);
+  $('drawerTheme').addEventListener('click', toggleTheme);
+
+  // Menu drawer
+  const openMenu = () => { $('drawer').classList.add('open'); $('overlay').classList.add('open'); };
+  const closeMenu = () => { $('drawer').classList.remove('open'); $('overlay').classList.remove('open'); };
+  $('menuBtn').addEventListener('click', openMenu);
+  $('closeMenu').addEventListener('click', closeMenu);
+  $('overlay').addEventListener('click', closeMenu);
+  document.querySelectorAll('.drawer-list a').forEach(a => a.addEventListener('click', closeMenu));
+  document.querySelectorAll('[data-soon]').forEach(b => b.addEventListener('click', () => {
+    closeMenu();
+    showToast(`${b.dataset.soon} is coming soon`);
+  }));
+
+  // Enquire buttons
+  document.querySelectorAll('[data-name]').forEach(b => b.addEventListener('click', () => showToast(`Thanks! We'll contact you about ${b.dataset.name}.`)));
+
+  // Login / signup (demo only)
+  let user = null, signupMode = false;
+  function renderAuth() {
+    $('authBtn').textContent = user ? 'Logout' : 'Login';
+    $('drawerAuth').textContent = user ? `🚪 Logout (${user.name})` : '🔐 Login';
+  }
+  function setMode(signup) {
+    signupMode = signup;
+    $('tabLogin').classList.toggle('active', !signup);
+    $('tabSignup').classList.toggle('active', signup);
+    $('nameField').hidden = !signup;
+    $('nameField').required = signup;
+    $('authTitle').textContent = signup ? 'Create your account' : 'Welcome back';
+    $('authSubmit').textContent = signup ? 'Sign up' : 'Login';
+  }
+  function openAuth(signup = false) { setMode(signup); $('modal').hidden = false; $('authForm').querySelector('input').focus(); closeMenu(); }
+  function closeAuth() { $('modal').hidden = true; }
+  $('tabLogin').addEventListener('click', () => setMode(false));
+  $('tabSignup').addEventListener('click', () => setMode(true));
+  $('closeAuth').addEventListener('click', closeAuth);
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeAuth(); });
+  $('authForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const email = f.get('email');
+    const name = (signupMode && f.get('name')) || email.split('@')[0];
+    user = { name };
+    e.target.reset();
+    closeAuth();
+    renderAuth();
+    showToast(signupMode ? `Welcome to Easehub, ${name}!` : `Logged in as ${name}`);
+  });
+  function authAction() {
+    if (user) { user = null; renderAuth(); showToast('You have been logged out'); }
+    else openAuth(false);
+  }
+  $('authBtn').addEventListener('click', authAction);
+  $('drawerAuth').addEventListener('click', () => { closeMenu(); authAction(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') { closeAuth(); closeMenu(); } });
+
+  // Count-up stats
+  const countIO = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, end = +el.dataset.count, start = performance.now();
+    const step = now => {
+      const p = Math.min((now - start) / 1400, 1);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))).toLocaleString('en-IN') + '+';
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    countIO.unobserve(el);
+  }), { threshold: 0.5 });
+  document.querySelectorAll('[data-count]').forEach(el => countIO.observe(el));
+
+  // Hyperspace: rooms, beds, and flats rush toward you, then shatter into sparks near the viewer
+  (() => {
+    const canvas = $('warp');
+    if (!canvas || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const ITEMS = ['🏠', '🛏️', '🛋️', '🍱', '🧺', '📚', '🚲', '🎒', '🧹', '🏢', '🛌', '🪑', '💡', '🍽️', '🪟', '🎓'];
+    const SPARKS = ['#fde68a', '#c7d2fe', '#fdba74', '#ffffff', '#a7f3d0'];
+    let w, h, f, items = [], sparks = [], boost = 0;
+
+    const spawn = it => {
+      it.ch = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+      it.x = (Math.random() - 0.5) * w * 2;
+      it.y = (Math.random() - 0.5) * h * 2;
+      it.z = w * (0.9 + Math.random() * 0.7);
+      it.rot = Math.random() * Math.PI * 2;
+      it.vr = (Math.random() - 0.5) * 0.02;
+    };
+    const project = it => [w / 2 + (it.x / it.z) * f, h / 2 + (it.y / it.z) * f];
+
+    function resize() {
+      w = canvas.width = innerWidth * dpr;
+      h = canvas.height = innerHeight * dpr;
+      f = w * 0.45;
+      const count = innerWidth < 720 ? 22 : 40;
+      items = Array.from({ length: count }, () => { const it = {}; spawn(it); it.z = Math.random() * w * 1.6 + 1; return it; });
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      const speed = w * 0.008 + boost;
+      items.sort((a, b) => b.z - a.z);
+      for (const it of items) {
+        it.z -= speed;
+        it.rot += it.vr;
+        if (it.z < w * 0.12) {
+          const [sx, sy] = project(it);
+          for (let i = 0; i < 8; i++) {
+            sparks.push({ x: sx, y: sy, vx: (Math.random() - 0.5) * 14 * dpr, vy: (Math.random() - 0.5) * 14 * dpr, life: 1, c: SPARKS[i % SPARKS.length] });
+          }
+          spawn(it);
+          continue;
+        }
+        const [sx, sy] = project(it);
+        const size = Math.min(220 * dpr, Math.max(8 * dpr, 60 * dpr * w / it.z));
+        const fade = Math.min(1, (w * 1.5 - it.z) / (w * 0.5)) * Math.min(1, (it.z - w * 0.12) / (w * 0.1));
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, fade);
+        ctx.translate(sx, sy);
+        ctx.rotate(it.rot);
+        ctx.font = `${size}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",system-ui,sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(it.ch, 0, 0);
+        ctx.restore();
+      }
+      sparks = sparks.filter(p => p.life > 0);
+      for (const p of sparks) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.4 * dpr;
+        p.life -= 0.03;
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.c;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (3 * p.life + 1) * dpr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      boost *= 0.94;
+      requestAnimationFrame(frame);
+    }
+
+    addEventListener('scroll', () => { boost = Math.min(boost + w * 0.004, w * 0.05); }, { passive: true });
+    addEventListener('resize', resize);
+    resize();
+    frame();
+  })();
+
+  // Magnetic hover on buttons
+  document.querySelectorAll('.btn, .enquire, .submit, .login-btn').forEach(b => {
+    b.addEventListener('mousemove', e => {
+      const r = b.getBoundingClientRect();
+      b.style.translate = `${(e.clientX - r.left - r.width / 2) * 0.15}px ${(e.clientY - r.top - r.height / 2) * 0.2}px`;
+    });
+    b.addEventListener('mouseleave', () => { b.style.translate = ''; });
+  });
+
+  renderAuth();
+</script>
+</body>
+</html>
