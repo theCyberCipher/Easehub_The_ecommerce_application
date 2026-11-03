@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Easehub Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="bar">
+    <span class="logo">Easehub</span>
+    <span class="role" id="roleTag" hidden></span>
+    <span class="spacer"></span>
+    <a href="../index.html" class="link">🏠 Home</a>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+    <button class="avatar-btn" id="avatarBtn" aria-label="Open profile" hidden>🎓</button>
+    <button class="icon-btn" id="menuBtn" aria-label="Open menu" hidden>☰</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- Shared login for students and administrators -->
+  <section id="loginView" class="login-wrap">
+    <div class="login-card">
+      <h2>Sign in to Easehub</h2>
+      <p class="muted">Students and administrators use the same login page.</p>
+      <form id="loginForm" class="form">
+        <input name="email" type="email" placeholder="Email" required autocomplete="username">
+        <input name="password" type="password" placeholder="Password" required autocomplete="current-password">
+        <p class="err" id="loginErr"></p>
+        <button class="submit" type="submit">Sign in</button>
+      </form>
+      <p class="hint">Demo accounts<br>Admin: admin@easehub.example / admin123<br>Student: student@easehub.example / student123</p>
+    </div>
+  </section>
+
+  <!-- Student dashboard -->
+  <section id="studentView" hidden>
+    <h1 id="welcome"></h1>
+    <p class="muted">Your rewards, bookings, feedback, and profile in one place.</p>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="rewards">Rewards</button>
+      <button class="tab" data-tab="redeemed">Redeemed history</button>
+      <button class="tab" data-tab="bookings">Booked orders</button>
+      <button class="tab" data-tab="feedback">My feedback</button>
+      <button class="tab" data-tab="profile">Profile</button>
+    </div>
+
+    <div class="panel" id="tab-overview">
+      <div class="coin-card">
+        <div>
+          <div class="muted">Your coins</div>
+          <div class="big"><span id="coins">0</span> 🪙</div>
+        </div>
+        <button class="btn-sm" id="checkinBtn">Daily check-in +10</button>
+      </div>
+      <div class="progress"><div id="barFill"></div></div>
+      <p id="unlockMsg" class="muted" style="margin-top:0"></p>
+      <div class="stats" style="margin-top:20px">
+        <div class="stat"><div class="k">Total booked</div><div class="v" id="ovBooked">₹0</div></div>
+        <div class="stat"><div class="k">Booked orders</div><div class="v" id="ovOrders">0</div></div>
+        <div class="stat"><div class="k">Rewards redeemed</div><div class="v" id="ovRedeemed">0</div></div>
+        <div class="stat"><div class="k">Feedback given</div><div class="v" id="ovFeedback">0</div></div>
+      </div>
+      <div class="card-box">
+        <h2>Recent coin activity</h2>
+        <ul class="hist" id="ovHistory"></ul>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-rewards" hidden>
+      <div class="card-box">
+        <h2>Rewards catalog</h2>
+        <p class="muted">Rewards unlock at 500 coins. After that, redeem any item you can afford.</p>
+        <div class="grid" id="rewards"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-redeemed" hidden>
+      <div class="total-bar"><span>Coins spent on rewards</span><span id="spentCoins">0 🪙</span></div>
+      <div class="card-box">
+        <h2>Redeemed history</h2>
+        <div class="list" id="redeemedList"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-bookings" hidden>
+      <div class="total-bar"><span>Total amount booked</span><span id="bookTotal">₹0</span></div>
+      <div class="card-box">
+        <h2>Book a service</h2>
+        <form id="bookForm" class="form">
+          <div class="row2">
+            <select name="service" id="serviceSel" required></select>
+            <input name="date" type="date" required>
+          </div>
+          <button class="submit" type="submit">Book now</button>
+        </form>
+      </div>
+      <div class="card-box">
+        <h2>Booked orders</h2>
+        <div class="list" id="bookingList"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-feedback" hidden>
+      <div class="card-box">
+        <h2>Give feedback</h2>
+        <form id="feedbackForm" class="form">
+          <select name="service" id="fbService" required></select>
+          <div class="stars-input" id="starsInput"></div>
+          <textarea name="text" placeholder="Tell us what worked and what could be better" required></textarea>
+          <button class="submit" type="submit">Submit feedback</button>
+        </form>
+      </div>
+      <div class="card-box">
+        <h2>Your feedback</h2>
+        <div class="list" id="feedbackList"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-profile" hidden>
+      <div class="card-box">
+        <h2>Profile picture</h2>
+        <p class="muted">Pick an icon. It appears on your profile button at the top right.</p>
+        <div class="avatars" id="avatarOptions"></div>
+      </div>
+      <div class="card-box">
+        <h2>Contact details</h2>
+        <p class="muted">Changes are confirmed with a one-time code before they are saved.</p>
+        <div id="contactBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin dashboard -->
+  <section id="adminView" hidden>
+    <h1>Admin dashboard</h1>
+    <p class="muted">Add coins to students and process reward orders.</p>
+    <div class="stats">
+      <div class="stat"><div class="k">Students</div><div class="v" id="statStudents">0</div></div>
+      <div class="stat"><div class="k">Total coins</div><div class="v" id="statCoins">0</div></div>
+      <div class="stat"><div class="k">Open reward orders</div><div class="v" id="statPending">0</div></div>
+    </div>
+    <div class="row2">
+      <div class="card-box">
+        <h2>Add coins</h2>
+        <form id="addForm" class="form">
+          <select name="student" id="addTo" required></select>
+          <input name="amount" type="number" min="1" placeholder="Coins to add" required>
+          <input name="note" placeholder="Reason (e.g. Event participation)">
+          <button class="submit" type="submit">Add coins</button>
+        </form>
+      </div>
+      <div class="card-box">
+        <h2>Redemption requests</h2>
+        <div class="list" id="adminOrders"></div>
+      </div>
+    </div>
+    <h2 style="margin-top:20px">Students</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Coins</th><th>Rewards</th></tr></thead>
+        <tbody id="studentRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Menu">
+  <div class="drawer-head"><strong>Menu</strong><button class="icon-btn" id="closeMenu" aria-label="Close menu">✕</button></div>
+  <ul class="drawer-list">
+    <li><a href="../index.html">🏠 Home</a></li>
+    <hr>
+    <li class="student-only"><button data-tab="overview">📊 Overview</button></li>
+    <li class="student-only"><button data-tab="rewards">🎁 Rewards</button></li>
+    <li class="student-only"><button data-tab="redeemed">🧾 Redeemed history</button></li>
+    <li class="student-only"><button data-tab="bookings">📦 Booked orders</button></li>
+    <li class="student-only"><button data-tab="feedback">⭐ My feedback</button></li>
+    <li class="student-only"><button data-tab="profile">👤 Profile</button></li>
+    <hr>
+    <li><button id="drawerLogout">🚪 Logout</button></li>
+  </ul>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

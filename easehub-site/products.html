@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Easehub | Products</title>
+<style>
+  :root { --brand:#0f766e; --brand-dark:#115e59; --bg:#f7f7f5; --card:#fff; --nav:rgba(255,255,255,.96); --text:#1f2937; --muted:#6b7280; --border:#d1d5db; --shadow:rgba(0,0,0,.08); --accent:#fef3c7; }
+  [data-theme="dark"] { --bg:#0f172a; --card:#1e293b; --nav:rgba(17,24,39,.95); --text:#e5e7eb; --muted:#94a3b8; --border:#334155; --shadow:rgba(0,0,0,.4); --accent:#422006; }
+  [hidden] { display:none !important; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; transition:background .3s, color .3s; }
+  a { color:inherit; text-decoration:none; }
+  button { font:inherit; cursor:pointer; }
+  nav { position:sticky; top:0; background:var(--nav); backdrop-filter:blur(8px); z-index:10; box-shadow:0 2px 12px var(--shadow); padding-top:env(safe-area-inset-top,0px); }
+  nav .bar { display:flex; align-items:center; gap:20px; padding:12px 24px; flex-wrap:wrap; }
+  .logo { font-weight:800; font-size:1.3rem; color:var(--brand); margin-right:auto; }
+  .links { display:flex; gap:20px; list-style:none; margin:0; padding:0; }
+  .links a { padding:4px 0; border-bottom:2px solid transparent; transition:border-color .3s, color .3s; }
+  .links a:hover, .links a.active { color:var(--brand); border-color:var(--brand); }
+  .icon-btn { background:none; border:none; font-size:1.2rem; color:var(--text); padding:6px 8px; border-radius:8px; }
+  .icon-btn:hover { background:var(--border); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 20px; }
+  header.hero { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; padding:72px 0; background-size:200% 200%; animation:shift 12s ease infinite; }
+  header.hero h1 { font-size:clamp(2rem,5vw,3rem); margin:0 0 12px; animation:fadeUp .8s ease both; }
+  header.hero p { margin:0; max-width:620px; opacity:.92; font-size:clamp(1rem,2vw,1.1rem); animation:fadeUp .8s .15s ease both; }
+  main { padding:64px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr)); gap:22px; }
+  .card { position:relative; overflow:hidden; isolation:isolate; background:var(--card); border-radius:16px; padding:26px; box-shadow:0 1px 3px var(--shadow); display:flex; flex-direction:column; transition:transform .35s ease, box-shadow .35s ease, color .3s; }
+  .card::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,var(--brand),#14b8a6); opacity:0; transition:opacity .4s; z-index:-1; }
+  .card:hover { transform:translateY(-8px) scale(1.03); box-shadow:0 18px 36px rgba(15,118,110,.28); color:#fff; }
+  .card:hover::before { opacity:1; }
+  .card:hover p, .card:hover h3, .card:hover .spec, .card:hover .price, .card:hover .price small { color:#fff; }
+  .grid:hover .card:not(:hover) { opacity:.6; transform:scale(.97); }
+  .emoji { font-size:3.2rem; text-align:center; background:var(--bg); border-radius:12px; padding:26px 0; margin-bottom:16px; transition:transform .4s; }
+  .card:hover .emoji { transform:scale(1.08) rotate(-8deg); }
+  .badge { align-self:flex-start; background:var(--accent); color:#b45309; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:10px; }
+  .card h3 { margin:0 0 8px; font-size:1.15rem; }
+  .card p { margin:0 0 10px; color:var(--muted); font-size:.95rem; }
+  .spec { font-size:.85rem; color:var(--muted); margin:0 0 6px; }
+  .price-row { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:14px; gap:10px; flex-wrap:wrap; }
+  .price { font-weight:800; font-size:1.2rem; color:var(--brand); }
+  .price small { font-weight:500; color:var(--muted); font-size:.8rem; }
+  .enquire { background:var(--brand); color:#fff; border:none; padding:9px 16px; border-radius:8px; font-weight:600; transition:background .2s; }
+  .enquire:hover { background:var(--brand-dark); }
+  footer { text-align:center; padding:28px 20px; color:var(--muted); font-size:.9rem; border-top:1px solid var(--border); }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,120px); background:var(--text); color:var(--bg); padding:12px 20px; border-radius:999px; z-index:50; transition:transform .35s ease; max-width:90vw; text-align:center; }
+  .toast.show { transform:translate(-50%,0); }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+  @keyframes shift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+  @media (max-width:720px) { .links { gap:12px; font-size:.9rem; } nav .bar { padding:10px 16px; } }
+  @media (hover:none) { .card:hover { transform:none; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="bar">
+    <a href="index.html" class="logo">Easehub</a>
+    <ul class="links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="#" class="active">Products</a></li>
+    </ul>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Featured bedding</h1>
+    <p>Bedding essentials to make your room feel like home, made with comfort and durability in mind.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="grid">
+      <div class="card"><div class="emoji">🛏️</div><span class="badge">Bestseller</span><h3>Bed Sheets</h3>
+        <p>Soft, breathable sheets that stay smooth wash after wash.</p>
+        <p class="spec">Material: 100% cotton · Sizes: single, double, king</p>
+        <div class="price-row"><div class="price">₹799 <small>/ set</small></div><button class="enquire" data-name="Bed Sheets">Enquire</button></div></div>
+      <div class="card"><div class="emoji">🛋️</div><h3>Cushions</h3>
+        <p>Decorative and comfortable cushions for sofas and beds.</p>
+        <p class="spec">Material: polyester blend · Size: 16 × 16 in</p>
+        <div class="price-row"><div class="price">₹349 <small>/ piece</small></div><button class="enquire" data-name="Cushions">Enquire</button></div></div>
+      <div class="card"><div class="emoji">🪶</div><span class="badge">New</span><h3>Pillows</h3>
+        <p>Supportive pillows that keep your neck and spine aligned.</p>
+        <p class="spec">Fill: memory foam or microfiber · Set of 2</p>
+        <div class="price-row"><div class="price">₹599 <small>/ set of 2</small></div><button class="enquire" data-name="Pillows">Enquire</button></div></div>
+      <div class="card"><div class="emoji">🧣</div><h3>Blankets</h3>
+        <p>Warm, lightweight blankets for every season.</p>
+        <p class="spec">Material: fleece or cotton · Sizes: single, double</p>
+        <div class="price-row"><div class="price">₹1,299 <small>/ piece</small></div><button class="enquire" data-name="Blankets">Enquire</button></div></div>
+      <div class="card"><div class="emoji">🛌</div><h3>Comforters</h3>
+        <p>Plush, all-season comforters for a deep, cozy sleep.</p>
+        <p class="spec">Fill: hollow fibre · Sizes: double, king</p>
+        <div class="price-row"><div class="price">₹2,199 <small>/ piece</small></div><button class="enquire" data-name="Comforters">Enquire</button></div></div>
+      <div class="card"><div class="emoji">🛡️</div><h3>Mattress Protectors</h3>
+        <p>Waterproof protection that keeps your mattress clean and fresh.</p>
+        <p class="spec">Material: cotton top, waterproof base · All sizes</p>
+        <div class="price-row"><div class="price">₹999 <small>/ piece</small></div><button class="enquire" data-name="Mattress Protectors">Enquire</button></div></div>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 Easehub. All rights reserved.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let t;
+  function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); clearTimeout(t); t = setTimeout(() => $('toast').classList.remove('show'), 2400); }
+  function applyTheme(dark) {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    $('themeBtn').textContent = dark ? '☀️' : '🌙';
+    try { localStorage.setItem('easehub-theme', dark ? 'dark' : 'light'); } catch (_) {}
+  }
+  let saved = null;
+  try { saved = localStorage.getItem('easehub-theme'); } catch (_) {}
+  applyTheme(saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+  $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.dataset.theme !== 'dark'));
+  document.querySelectorAll('[data-name]').forEach(b => b.addEventListener('click', () => toast(`Thanks! We'll contact you about ${b.dataset.name}.`)));
+</script>
+</body>
+</html>
